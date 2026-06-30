@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidPrescription(data) {
+      return data.keys().hasAll(['userId', 'fileName', 'fileUrl', 'status', 'createdAt'])
+        && data.keys().size() >= 5
+        && data.keys().size() <= 6
+        && data.userId == request.auth.uid
+        && data.fileName is string && data.fileName.size() <= 256
+        && data.fileUrl is string && data.fileUrl.size() <= 2048
+        && data.status is string && data.status in ['pending', 'reviewed', 'fulfilled', 'rejected']
+        && (
+            !('patientId' in data) ||
+            (data.patientId is string && data.patientId.size() <= 128)
+        )
+        // Note: For create, timestamp is checked below. For update, we might not allow updates to prescription.
+    }
+
+    match /prescriptions/{prescriptionId} {
+      allow read: if isSignedIn() && existing().userId == request.auth.uid;
+      allow create: if isSignedIn() 
+        && isValidId(prescriptionId)
+        && isValidPrescription(incoming())
+        && incoming().createdAt == request.time
+        && incoming().status == 'pending'; // Initial status must be pending
+      allow update: if false; // Prescriptions shouldn't be updated by users
+      allow delete: if false; // Prescriptions shouldn't be deleted by users
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

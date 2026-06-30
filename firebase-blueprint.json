@@ -1,0 +1,41 @@
+{
+  "entities": {
+    "Prescription": {
+      "title": "Prescription",
+      "description": "A user uploaded prescription for fulfillment",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The user ID of the patient who uploaded this"
+        },
+        "patientId": {
+          "type": "string",
+          "description": "Optional patient NHS or other ID"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "fileUrl": {
+          "type": "string",
+          "description": "Firebase Storage download URL"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "reviewed", "fulfilled", "rejected"],
+          "description": "Status of the prescription review process"
+        },
+        "createdAt": {
+          "type": "timestamp"
+        }
+      },
+      "required": ["userId", "fileName", "fileUrl", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/prescriptions/{prescriptionId}": {
+      "schema": { "$ref": "#/entities/Prescription" },
+      "description": "Collection of uploaded prescriptions"
+    }
+  }
+}

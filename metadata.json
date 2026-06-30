@@ -1,0 +1,10 @@
+{
+  "name": "Long-Range Pharmacies Pharmacy Platform",
+  "description": "A modern, full-stack pharmacy website with an online store, medication tracking, secure prescription upload, and store locator.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
