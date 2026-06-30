@@ -9,6 +9,7 @@ import babyImg from "../assets/images/african_baby_banner_1782732961309.jpg";
 import firstAidImg from "../assets/images/regenerated_image_1782136435951.jpg";
 import skinRepublicImg from "../assets/images/skin_republic_banner_1782733312396.jpg";
 import laRiveImg from "../assets/images/la_rive_perfume_banner_1782734576816.jpg";
+import { products } from "../data";
 
 export default function Home() {
   const { addToCart } = useCart();
@@ -24,12 +25,11 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        setFeaturedProducts(data.slice(0, 4)); // just take top 4 for home
-        setLoading(false);
-      });
+    // Simulated API call latency
+    setTimeout(() => {
+      setFeaturedProducts(products.slice(0, 4));
+      setLoading(false);
+    }, 500);
   }, []);
 
   useEffect(() => {
@@ -48,18 +48,18 @@ export default function Home() {
       <section className="relative w-full overflow-hidden h-[500px] md:h-[650px] bg-green-50">
         {categories.map((cat, index) => (
             <div 
-                key={index} 
+                key={`cat-${index}`} 
                 className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             >
-                <div className="container mx-auto px-4 py-8 md:py-12 flex flex-col items-center h-full">
-                    <div className="w-full max-w-3xl z-10 relative flex justify-center">
+                <div className="w-full h-full flex flex-col items-center pb-8 md:pb-12">
+                    <div className="w-full flex-1 z-10 relative">
                        <img 
                          src={cat.image} 
                          alt={cat.name} 
-                         className="w-full aspect-[18/9] object-cover mix-blend-multiply rounded-lg"
+                         className="w-full h-full absolute inset-0 object-cover mix-blend-multiply"
                        />
                     </div>
-                    <div className="w-full text-center mt-4 md:mt-5 z-10 flex flex-col justify-center items-center -translate-y-2">
+                    <div className="w-full text-center mt-6 md:mt-8 z-10 flex flex-col justify-center items-center">
                         <h1 className="text-2xl md:text-4xl font-black text-[#32a852] tracking-widest mb-2 md:mb-3">
                           {cat.title}
                         </h1>
@@ -89,7 +89,7 @@ export default function Home() {
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
           {categories.map((_, index) => (
               <button 
-                key={index} 
+                key={`dot-${index}`} 
                 onClick={() => setCurrentSlide(index)}
                 className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-colors ${index === currentSlide ? 'bg-[#32a852]' : 'bg-gray-400/50 hover:bg-gray-400'}`}
                 aria-label={`Go to slide ${index + 1}`}
@@ -130,7 +130,7 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {loading ? (
              Array.from({ length: 4 }).map((_, i) => (
-               <div key={i} className="animate-pulse flex flex-col h-[300px] bg-white rounded-lg shadow-sm border p-4">
+               <div key={`loading-${i}`} className="animate-pulse flex flex-col h-[300px] bg-white rounded-lg shadow-sm border p-4">
                  <div className="bg-gray-200 h-40 rounded-md mb-4" />
                  <div className="bg-gray-200 h-4 w-2/3 mb-2 rounded" />
                  <div className="bg-gray-200 h-4 w-1/3 rounded" />

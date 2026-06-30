@@ -109,7 +109,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="space-y-4">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="flex items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                  <div key={`admin-overview-${i}`} className="flex items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
                     <div className="h-2 w-2 mt-2 rounded-full bg-blue-500 mr-4"></div>
                     <div>
                       <p className="text-sm font-medium text-gray-900">New prescription uploaded by John Doe</p>

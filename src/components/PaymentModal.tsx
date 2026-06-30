@@ -33,19 +33,11 @@ export function PaymentModal({ open, onOpenChange, amount, onSuccess }: PaymentM
     setError("");
 
     try {
-      const res = await fetch("/api/payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, method }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Payment failed");
-      }
-
-      onSuccess(data.orderId);
+      // Simulate API call for static GitHub Pages deployment
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      
+      const orderId = "LR-" + Math.floor(100000 + Math.random() * 900000);
+      onSuccess(orderId);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     } finally {

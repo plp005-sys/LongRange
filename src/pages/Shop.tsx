@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button";
 import { Search, Filter, ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "../components/ui/Input";
 import { useCart } from "../contexts/CartContext";
+import { products as mockProducts } from "../data";
 
 export default function Shop() {
   const { addToCart } = useCart();
@@ -24,12 +25,10 @@ export default function Shop() {
   const beautySubCategories = ["Skin Republic", "La Rive"];
 
   useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-      });
+    setTimeout(() => {
+      setProducts(mockProducts);
+      setLoading(false);
+    }, 500);
   }, []);
 
   useEffect(() => {
@@ -152,7 +151,7 @@ export default function Shop() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="animate-pulse flex flex-col h-[300px] bg-white rounded-lg shadow-sm border p-4">
+                <div key={`shop-loading-${i}`} className="animate-pulse flex flex-col h-[300px] bg-white rounded-lg shadow-sm border p-4">
                   <div className="bg-gray-200 h-40 rounded-md mb-4" />
                   <div className="bg-gray-200 h-4 w-2/3 mb-2 rounded" />
                   <div className="bg-gray-200 h-4 w-1/3 rounded" />

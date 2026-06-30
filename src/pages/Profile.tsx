@@ -83,7 +83,7 @@ export default function Profile() {
               {loadingOrders ? (
                 <div className="space-y-4">
                   {[1, 2].map((i) => (
-                    <div key={i} className="animate-pulse flex gap-4 h-20 bg-gray-50 rounded-md border p-4" />
+                    <div key={`profile-loading-${i}`} className="animate-pulse flex gap-4 h-20 bg-gray-50 rounded-md border p-4" />
                   ))}
                 </div>
               ) : orders.length === 0 ? (

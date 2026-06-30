@@ -3,18 +3,17 @@ import { Medication } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Pill, Calendar, Clock, RefreshCw } from "lucide-react";
 import { Button } from "../components/ui/Button";
+import { medications as mockMedications } from "../data";
 
 export default function Tracking() {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/medications")
-      .then((res) => res.json())
-      .then((data) => {
-        setMedications(data);
-        setLoading(false);
-      });
+    setTimeout(() => {
+      setMedications(mockMedications);
+      setLoading(false);
+    }, 500);
   }, []);
 
   return (
@@ -33,7 +32,7 @@ export default function Tracking() {
         {loading ? (
           <div className="space-y-4">
             {[1, 2].map((i) => (
-              <Card key={i} className="animate-pulse">
+              <Card key={`tracking-loading-${i}`} className="animate-pulse">
                 <CardHeader className="h-16 bg-gray-100" />
                 <CardContent className="h-24 bg-gray-50" />
               </Card>

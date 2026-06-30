@@ -4,6 +4,7 @@ import { Card, CardContent } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { MapPin, Phone, Clock } from "lucide-react";
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
+import { stores as mockStores } from "../data";
 
 const API_KEY =
   process.env.GOOGLE_MAPS_PLATFORM_KEY ||
@@ -18,13 +19,11 @@ export default function Locator() {
   const [selectedStore, setSelectedStore] = useState<StoreLocation | null>(null);
 
   useEffect(() => {
-    fetch("/api/stores")
-      .then((res) => res.json())
-      .then((data) => {
-        setStores(data);
-        if (data.length > 0) setSelectedStore(data[0]);
-        setLoading(false);
-      });
+    setTimeout(() => {
+      setStores(mockStores);
+      if (mockStores.length > 0) setSelectedStore(mockStores[0]);
+      setLoading(false);
+    }, 500);
   }, []);
 
   if (!hasValidKey) {
