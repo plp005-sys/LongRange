@@ -26,23 +26,34 @@ export default function Register() {
       setError("");
       setLoading(true);
       
-      // Generate an 8-digit account number
-      const generatedAccountNumber = Math.floor(10000000 + Math.random() * 90000000).toString();
-      const emailForAuth = `${generatedAccountNumber}@example.com`;
+      const nameParts = name.trim().split(" ");
+      const firstName = nameParts[0] || "User";
+      const lastName = nameParts.slice(1).join(" ") || "Name";
+      const username = email.split("@")[0] || email;
 
-      const { data, error: authError } = await supabase.auth.signUp({
-        email: emailForAuth,
-        password,
-        options: {
-          data: {
-            full_name: name,
-            account_number: generatedAccountNumber,
-            contact_email: email, // Store actual email in metadata
-          }
-        }
+      const res = await fetch("/api/customers/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          email: email,
+          password: password,
+          name: name
+        })
       });
 
-      if (authError) throw authError;
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || errorData.error || errorData.title || "Failed to register");
+      }
+
+      const data = await res.json();
+      const generatedAccountNumber = data.customerId || data.id || Math.floor(10000000 + Math.random() * 90000000).toString();
+      
+      // Store customerId in localStorage
+      localStorage.setItem("customerId", generatedAccountNumber);
 
       // Show success screen with Account Number
       setSuccessData({ accountNumber: generatedAccountNumber });
@@ -62,7 +73,7 @@ export default function Register() {
             <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
               ✓
             </div>
-            <CardTitle className="text-2xl text-[#32a852]">Registration Successful!</CardTitle>
+            <CardTitle className="text-2xl text-[#15e637]">Registration Successful!</CardTitle>
             <CardDescription className="text-gray-600 text-base mt-2">
               Please save your login details below.
             </CardDescription>
@@ -149,7 +160,7 @@ export default function Register() {
               {loading ? "Creating..." : "Sign Up"}
             </Button>
             <div className="text-sm text-center text-gray-500">
-              Already have an account? <Link to="/login" className="text-[#32a852] hover:underline font-medium">Log In</Link>
+              Already have an account? <Link to="/login" className="text-[#15e637] hover:underline font-medium">Log In</Link>
             </div>
           </CardFooter>
         </form>

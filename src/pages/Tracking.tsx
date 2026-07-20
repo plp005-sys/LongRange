@@ -48,7 +48,7 @@ export default function Tracking() {
           </Card>
         ) : (
           medications.map((med) => (
-            <Card key={med.id} className="overflow-hidden border-l-4 border-l-[#32a852]">
+            <Card key={med.id} className="overflow-hidden border-l-4 border-l-[#15e637]">
               <CardContent className="p-0 sm:flex">
                 <div className="p-6 flex-1">
                   <div className="flex justify-between items-start mb-2">

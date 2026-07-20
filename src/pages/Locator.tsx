@@ -36,7 +36,7 @@ export default function Locator() {
                   key={store.id} 
                   onClick={() => setSelectedStore(store)}
                   className={`p-4 rounded-md cursor-pointer transition-colors border ${
-                    selectedStore?.id === store.id ? "border-[#32a852] bg-green-50" : "border-transparent hover:bg-gray-50"
+                    selectedStore?.id === store.id ? "border-[#15e637] bg-green-50" : "border-transparent hover:bg-gray-50"
                   }`}
                 >
                   <h3 className="font-bold text-gray-900">{store.name}</h3>
@@ -44,7 +44,7 @@ export default function Locator() {
                     <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
                     {store.address}
                   </p>
-                  <div className="mt-2 text-xs font-medium text-[#32a852]">
+                  <div className="mt-2 text-xs font-medium text-[#15e637]">
                     {store.status}
                   </div>
                 </div>
@@ -90,7 +90,7 @@ export default function Locator() {
                  <Clock className="h-4 w-4" /> {selectedStore.status}
               </p>
               <Button 
-                className="w-full mt-4 bg-[#FFF101] hover:bg-[#32a852] hover:text-white text-gray-900 font-bold transition-colors"
+                className="w-full mt-4 bg-[#FFF101] hover:bg-[#15e637] hover:text-white text-gray-900 font-bold transition-colors"
                 onClick={() => window.open(selectedStore.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${selectedStore.lat},${selectedStore.lng}`, "_blank")}
               >
                 Get Directions

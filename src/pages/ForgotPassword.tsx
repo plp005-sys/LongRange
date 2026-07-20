@@ -58,7 +58,7 @@ export default function ForgotPassword() {
               {loading ? "Sending..." : "Reset Password"}
             </Button>
             <div className="text-sm text-center text-gray-500">
-              <Link to="/login" className="text-[#32a852] hover:underline font-medium">Back to Log In</Link>
+              <Link to="/login" className="text-[#15e637] hover:underline font-medium">Back to Log In</Link>
             </div>
           </CardFooter>
         </form>

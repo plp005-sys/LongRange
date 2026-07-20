@@ -8,6 +8,48 @@ async function startServer() {
 
   app.use(express.json());
 
+  // --- Third-Party Integration ---
+  let THIRD_PARTY_API_URL = process.env.THIRD_PARTY_API_URL || "";
+  if (THIRD_PARTY_API_URL.includes("/swagger")) {
+    THIRD_PARTY_API_URL = THIRD_PARTY_API_URL.split("/swagger")[0];
+  }
+  const ERP_EMAIL = process.env.ERP_EMAIL || "ecommerce";
+  const ERP_PASSWORD = process.env.ERP_PASSWORD || "Pass-5952";
+  
+  let erpToken: string | null = null;
+  
+  async function getErpToken() {
+    if (erpToken) return erpToken;
+    if (!THIRD_PARTY_API_URL) return null;
+    
+    try {
+      const response = await fetch(`${THIRD_PARTY_API_URL}/api/Auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: ERP_EMAIL,
+          password: ERP_PASSWORD,
+          neverExpire: true
+        })
+      });
+      if (response.ok) {
+        // the response might just be the token string or an object like { token: "..." }
+        // The instructions say "From the response, copy the token value. That JWT is your API key."
+        const data = await response.text();
+        try {
+          const json = JSON.parse(data);
+          erpToken = json.token || json.jwt || data;
+        } catch {
+          erpToken = data; // If it's a plain string
+        }
+        return erpToken;
+      }
+    } catch (e) {
+      console.error("Failed to authenticate with ERP", e);
+    }
+    return null;
+  }
+
   // --- API Routes ---
   
   // Mock Products API
@@ -69,6 +111,120 @@ async function startServer() {
       { id: 3, name: "Bright Pharmacies - Southerton", address: "Southerton, Harare, Zimbabwe", lat: -17.8596, lng: 31.0186, status: status, phone: "+263 71 560 1156", directionsUrl: "https://www.google.com/maps/dir//Southerton,+Harare,+Zimbabwe" },
     ];
     res.json(stores);
+  });
+
+  // Mock Hidden Inventory State
+  let inventory = [
+    { id: "INV-001", name: "Amoxicillin 500mg", category: "Antibiotics", stock: 1250, reorderLevel: 500, lastRestocked: "2024-05-15", status: "In Stock" },
+    { id: "INV-002", name: "Ibuprofen 400mg", category: "Pain Relief", stock: 85, reorderLevel: 200, lastRestocked: "2024-04-20", status: "Low Stock" },
+    { id: "INV-003", name: "Lisinopril 10mg", category: "Cardiovascular", stock: 430, reorderLevel: 100, lastRestocked: "2024-05-01", status: "In Stock" },
+    { id: "INV-004", name: "Metformin 500mg", category: "Diabetes", stock: 15, reorderLevel: 150, lastRestocked: "2024-03-10", status: "Critical" },
+    { id: "INV-005", name: "Digital Thermometer", category: "Equipment", stock: 32, reorderLevel: 20, lastRestocked: "2024-05-10", status: "In Stock" },
+    { id: "INV-006", name: "N95 Face Masks (Box of 50)", category: "PPE", stock: 500, reorderLevel: 100, lastRestocked: "2024-06-01", status: "In Stock" }
+  ];
+
+  // Mock Hidden Inventory API (Read)
+  app.get("/api/inventory", async (req, res) => {
+    // In a real application, you would verify admin authentication here
+    
+    const token = await getErpToken();
+    if (token && THIRD_PARTY_API_URL) {
+      try {
+        // Try to fetch from the third-party API
+        const response = await fetch(`${THIRD_PARTY_API_URL}/api/ecommerce/products`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          // Assuming the data is an array of products
+          // We can map it to our inventory structure if needed
+          return res.json(data);
+        } else if (response.status === 401) {
+           // Token might be expired, clear it
+           erpToken = null;
+        }
+      } catch (e) {
+        console.error("Failed to fetch from ERP", e);
+      }
+    }
+    
+    // Fallback to mock data
+    res.json(inventory);
+  });
+
+  // Customer Registration Proxy
+  app.post("/api/customers/register", async (req, res) => {
+    const token = await getErpToken();
+    if (!token || !THIRD_PARTY_API_URL) {
+      // Fallback for local testing
+      return res.json({ customerId: `CUST-${Math.floor(Math.random() * 10000)}`, ...req.body });
+    }
+
+    try {
+      const response = await fetch(`${THIRD_PARTY_API_URL}/api/ecommerce/customers/register`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(req.body)
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return res.json(data);
+      } else {
+        return res.status(response.status).json(await response.json().catch(() => ({})));
+      }
+    } catch (e) {
+      console.error("Failed to register customer", e);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Create new inventory item
+  app.post("/api/inventory", (req, res) => {
+    const newItem = {
+      id: `INV-00${inventory.length + 1}`,
+      name: req.body.name || "New Item",
+      category: req.body.category || "General",
+      stock: req.body.stock || 0,
+      reorderLevel: req.body.reorderLevel || 10,
+      lastRestocked: new Date().toISOString().split('T')[0],
+      status: req.body.stock > req.body.reorderLevel ? "In Stock" : "Low Stock"
+    };
+    inventory.push(newItem);
+    res.status(201).json(newItem);
+  });
+
+  // Update existing inventory item
+  app.put("/api/inventory/:id", (req, res) => {
+    const id = req.params.id;
+    const index = inventory.findIndex(item => item.id === id);
+    if (index !== -1) {
+      inventory[index] = { ...inventory[index], ...req.body };
+      // Recalculate status based on stock and reorderLevel
+      if (inventory[index].stock <= 0) {
+        inventory[index].status = "Critical";
+      } else if (inventory[index].stock <= inventory[index].reorderLevel) {
+        inventory[index].status = "Low Stock";
+      } else {
+        inventory[index].status = "In Stock";
+      }
+      res.json(inventory[index]);
+    } else {
+      res.status(404).json({ error: "Item not found" });
+    }
+  });
+
+  // Delete inventory item
+  app.delete("/api/inventory/:id", (req, res) => {
+    const id = req.params.id;
+    inventory = inventory.filter(item => item.id !== id);
+    res.json({ success: true, message: "Item deleted" });
   });
 
   // --- Vite Middleware (MUST BE AFTER API ROUTES) ---

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { 
@@ -7,11 +7,30 @@ import {
   Settings, 
   Activity,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Database
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "inventory") {
+      setInventoryLoading(true);
+      fetch("/api/inventory")
+        .then(res => res.json())
+        .then(data => {
+          setInventory(data);
+          setInventoryLoading(false);
+        })
+        .catch(err => {
+          console.error("Failed to load inventory", err);
+          setInventoryLoading(false);
+        });
+    }
+  }, [activeTab]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -94,6 +113,12 @@ export default function AdminDashboard() {
             Prescriptions & Orders
           </button>
           <button 
+            className={`pb-2 px-2 text-sm font-medium ${activeTab === 'inventory' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}
+            onClick={() => setActiveTab('inventory')}
+          >
+            Inventory
+          </button>
+          <button 
             className={`pb-2 px-2 text-sm font-medium ${activeTab === 'settings' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}
             onClick={() => setActiveTab('settings')}
           >
@@ -144,6 +169,62 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-center h-48 border-2 border-dashed border-gray-200 rounded-md bg-gray-50">
                 <p className="text-gray-500">Prescription queue will appear here.</p>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === 'inventory' && (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Hidden API Inventory</CardTitle>
+              <Button size="sm" variant="outline" onClick={() => {
+                setInventoryLoading(true);
+                fetch("/api/inventory").then(res => res.json()).then(data => { setInventory(data); setInventoryLoading(false); }).catch(err => { console.error(err); setInventoryLoading(false); });
+              }}>Refresh</Button>
+            </CardHeader>
+            <CardContent>
+              {inventoryLoading ? (
+                <div className="flex justify-center p-8 text-gray-500">Loading inventory data...</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+                      <tr>
+                        <th className="px-4 py-3">ID</th>
+                        <th className="px-4 py-3">Item Name</th>
+                        <th className="px-4 py-3">Category</th>
+                        <th className="px-4 py-3">Stock Level</th>
+                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">Last Restocked</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {inventory.map((item, i) => (
+                        <tr key={i} className="bg-white border-b hover:bg-gray-50">
+                          <td className="px-4 py-3 font-medium text-gray-900">{item.id}</td>
+                          <td className="px-4 py-3">{item.name}</td>
+                          <td className="px-4 py-3">{item.category}</td>
+                          <td className="px-4 py-3">
+                            <span className="font-semibold">{item.stock}</span>
+                            <span className="text-gray-400 ml-1 text-xs">/ {item.reorderLevel} min</span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.status === 'In Stock' ? 'bg-green-100 text-green-800' : item.status === 'Low Stock' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+                              {item.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-gray-500">{item.lastRestocked}</td>
+                        </tr>
+                      ))}
+                      {inventory.length === 0 && !inventoryLoading && (
+                        <tr>
+                          <td colSpan={6} className="px-4 py-8 text-center text-gray-500">No inventory data found.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

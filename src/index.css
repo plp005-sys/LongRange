@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+@layer utilities {
+  div#root > div > header > div > div > a > span {
+    display: none !important;
+  }
+}

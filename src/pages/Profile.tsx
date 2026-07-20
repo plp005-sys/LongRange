@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
-import { User, Package, Settings, LogOut, ShieldAlert } from "lucide-react";
+import { User, Package, Settings, LogOut, ShieldAlert, Database } from "lucide-react";
 
 export default function Profile() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [loadingInventory, setLoadingInventory] = useState(true);
 
   useEffect(() => {
     // Mock user orders fetching
@@ -20,6 +22,18 @@ export default function Profile() {
       ]);
       setLoadingOrders(false);
     }, 1000);
+
+    // Fetch Hidden Inventory
+    fetch("/api/inventory")
+      .then(res => res.json())
+      .then(data => {
+        setInventory(data);
+        setLoadingInventory(false);
+      })
+      .catch(err => {
+        console.error("Failed to load inventory", err);
+        setLoadingInventory(false);
+      });
   }, []);
 
   const handleLogout = async () => {
@@ -41,7 +55,7 @@ export default function Profile() {
         <div className="md:col-span-1 space-y-6">
           <Card>
             <CardContent className="p-6 text-center">
-              <div className="w-24 h-24 bg-[#32a852] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4">
+              <div className="w-24 h-24 bg-[#15e637] text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4">
                 {user?.user_metadata?.full_name ? user.user_metadata.full_name.charAt(0).toUpperCase() : <User className="h-10 w-10" />}
               </div>
               <h2 className="text-xl font-bold">{user?.user_metadata?.full_name || "Patient"}</h2>
@@ -51,7 +65,7 @@ export default function Profile() {
               </Button>
             </CardContent>
           </Card>
-
+          
           <Card>
              <CardContent className="p-2 flex flex-col">
                 <Button variant="ghost" className="justify-start px-4 py-3 h-auto" onClick={() => navigate("/upload")}>
@@ -117,7 +131,7 @@ export default function Profile() {
               )}
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardHeader>
               <CardTitle>Saved Information</CardTitle>
@@ -132,7 +146,7 @@ export default function Profile() {
                        Apt 4B<br/>
                        Anytown, NY 10001
                      </p>
-                     <Button variant="link" className="px-0 mt-2 text-[#32a852]">Edit Address</Button>
+                     <Button variant="link" className="px-0 mt-2 text-[#15e637]">Edit Address</Button>
                   </div>
                   <div className="border border-gray-100 bg-gray-50 rounded-md p-4">
                      <h4 className="font-semibold mb-2 text-sm text-gray-500 uppercase tracking-wider">Payment Method</h4>
@@ -141,13 +155,13 @@ export default function Profile() {
                        <span className="text-gray-900">Ending in 4242</span>
                      </div>
                      <p className="text-sm text-gray-500 mb-1">Expires 12/25</p>
-                     <Button variant="link" className="px-0 mt-2 text-[#32a852]">Edit Payment</Button>
+                     <Button variant="link" className="px-0 mt-2 text-[#15e637]">Edit Payment</Button>
                   </div>
                </div>
             </CardContent>
           </Card>
-        </div>
 
+        </div>
       </div>
     </div>
   );

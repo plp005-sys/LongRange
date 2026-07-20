@@ -21,14 +21,30 @@ export default function Shop() {
     initialCategory === "Beauty & Cosmetics" || initialCategory === "Skin Republic" || initialCategory === "La Rive"
   );
 
-  const categories = ["All", "Shop", "Beauty & Cosmetics", "Personal Care", "Baby Care", "Pharmacy & Supplement", "Fitness"];
+  const categories = ["All", "Shop", "Beauty & Cosmetics", "Personal Care", "Baby Care", "Pharmacy & Supplement", "Fitness", "Herbal Products"];
   const beautySubCategories = ["Skin Republic", "La Rive"];
 
   useEffect(() => {
-    setTimeout(() => {
+    Promise.all([
+      fetch("/api/inventory").then(res => res.json()).catch(() => []),
+      new Promise(resolve => setTimeout(() => resolve(mockProducts), 500))
+    ]).then(([inventoryData, localProducts]) => {
+      // Map inventory items to product format if they are from the ERP
+      const erpProducts = Array.isArray(inventoryData) ? inventoryData.map((item: any) => ({
+        id: item.id || `erp-${Math.random()}`,
+        name: item.name || "Unknown Product",
+        category: item.category || "General",
+        price: item.price || item.unitPrice || 0,
+        image: item.imageUrl || item.image || "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&q=80"
+      })) : [];
+      
+      setProducts([...erpProducts, ...(localProducts as Product[])]);
+      setLoading(false);
+    }).catch(err => {
+      console.error("Failed to load products", err);
       setProducts(mockProducts);
       setLoading(false);
-    }, 500);
+    });
   }, []);
 
   useEffect(() => {
@@ -76,8 +92,8 @@ export default function Shop() {
                         <button
                           onClick={() => handleCategoryClick(cat)}
                           className={`flex-1 text-left px-3 py-2 rounded-l-md text-sm transition-colors ${
-                            (selectedCategory === cat || (cat === "All" && !selectedCategory))
-                              ? "bg-[#32a852] text-white font-medium"
+                            selectedCategory === cat
+                              ? "bg-[#15e637] text-white font-medium"
                               : "text-gray-600 hover:bg-green-50"
                           }`}
                         >
@@ -86,8 +102,8 @@ export default function Shop() {
                         <button
                           onClick={() => setIsBeautyOpen(!isBeautyOpen)}
                           className={`px-3 py-2 rounded-r-md transition-colors ${
-                            (selectedCategory === cat || (cat === "All" && !selectedCategory))
-                              ? "bg-[#32a852] text-white font-medium"
+                            selectedCategory === cat
+                              ? "bg-[#15e637] text-white font-medium"
                               : "text-gray-600 hover:bg-green-50 bg-gray-50"
                           }`}
                         >
@@ -102,7 +118,7 @@ export default function Shop() {
                               onClick={() => handleCategoryClick(subCat)}
                               className={`text-left px-3 py-2 rounded-md text-sm transition-colors ${
                                 selectedCategory === subCat
-                                  ? "bg-[#32a852] text-white font-medium"
+                                  ? "bg-[#15e637] text-white font-medium"
                                   : "text-gray-600 hover:bg-green-50"
                               }`}
                             >
@@ -117,7 +133,7 @@ export default function Shop() {
                       onClick={() => handleCategoryClick(cat)}
                       className={`text-left px-3 py-2 rounded-md text-sm transition-colors ${
                         (selectedCategory === cat || (cat === "All" && !selectedCategory))
-                          ? "bg-[#32a852] text-white font-medium"
+                          ? "bg-[#15e637] text-white font-medium"
                           : "text-gray-600 hover:bg-green-50"
                       }`}
                     >
@@ -174,7 +190,7 @@ export default function Shop() {
                     <div className="text-xs text-gray-500 mb-1">{product.category}</div>
                     <h4 className="font-semibold text-gray-800 flex-1 leading-tight mb-2 line-clamp-2">{product.name}</h4>
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                      <span className="text-lg font-bold text-[#32a852]">${product.price.toFixed(2)}</span>
+                      <span className="text-lg font-bold text-[#15e637]">${product.price.toFixed(2)}</span>
                       <Button size="sm" onClick={() => addToCart(product)}>Add</Button>
                     </div>
                   </CardContent>

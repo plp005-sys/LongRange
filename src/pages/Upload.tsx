@@ -131,12 +131,12 @@ export default function PrescriptionUpload() {
                <div 
                  onDragOver={handleDragOver}
                  onDrop={handleDrop}
-                 className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-[#32a852] transition-colors cursor-pointer bg-gray-50 relative"
+                 className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-[#15e637] transition-colors cursor-pointer bg-gray-50 relative"
                >
                  <div className="space-y-1 text-center">
                    <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
                    <div className="flex text-sm text-gray-600 justify-center">
-                     <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-[#32a852] hover:text-[#25823d] focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[#32a852]">
+                     <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-[#15e637] hover:text-[#11b32b] focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[#15e637]">
                        <span>Upload a file</span>
                        <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".pdf,.png,.jpg,.jpeg" />
                      </label>

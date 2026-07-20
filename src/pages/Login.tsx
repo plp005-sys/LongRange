@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
+import logoImage from "../assets/images/logo.png";
 
 export default function Login() {
   const [accountNo, setAccountNo] = useState("");
@@ -35,13 +36,21 @@ export default function Login() {
   return (
     <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[80vh]">
       <div className="w-full max-w-[650px] bg-white shadow-xl border border-gray-200 rounded-lg p-6 sm:p-10 font-sans">
+        <div className="flex justify-center mb-6">
+          <img 
+            src={logoImage} 
+            alt="Logo" 
+            className="h-16 w-auto object-contain"
+            referrerPolicy="no-referrer"
+          />
+        </div>
         <h1 className="text-[28px] text-[#2c3e50] mb-2 font-normal text-center">Login</h1>
         <p className="text-[15px] text-[#333] mb-5 text-center">Enter your Account No. and Password to login</p>
         
         <hr className="border-t border-gray-200 mb-6" />
 
-        <div className="bg-[#e9f5f7] border border-[#d2ebef] text-[#0f6073] px-5 py-4 rounded-sm mb-8 text-[14.5px] leading-relaxed">
-          If this is the first time you are logging into the web cart, enter your <strong className="font-semibold text-[#035467]">Account No. for both the login and password.</strong> An email will be sent to you with further instructions.
+        <div className="bg-[#15e637]/10 backdrop-blur-md border border-[#15e637]/30 text-emerald-900 px-5 py-4 rounded-sm mb-8 text-[14.5px] leading-relaxed">
+          If this is the first time you are logging into the web cart, enter your <strong className="font-semibold text-emerald-950">Account No. for both the login and password.</strong> An email will be sent to you with further instructions.
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -87,7 +96,7 @@ export default function Login() {
                 Forgot your password?
               </button>
             </div>
-            <Link to="/register" className="text-[#32a852] hover:text-[#288741] hover:underline text-[15px] font-medium">
+            <Link to="/register" className="text-[#15e637] hover:text-[#11b32b] hover:underline text-[15px] font-medium">
               I'm a new customer
             </Link>
           </div>
@@ -95,10 +104,10 @@ export default function Login() {
 
         <div className="mt-14 flex flex-col items-center text-center text-[15px] text-[#333] space-y-1">
           <p>Contact Information:</p>
-          <p>Email: <a href="mailto:info@longrangepharmacies.co.zw" className="text-[#32a852] hover:text-[#288741] hover:underline font-medium">info@longrangepharmacies.co.zw</a></p>
+          <p>Email: <a href="mailto:info@longrangepharmacies.co.zw" className="text-[#15e637] hover:text-[#11b32b] hover:underline font-medium">info@longrangepharmacies.co.zw</a></p>
           
           <div className="pt-6">
-            <Link to="/" className="text-[#32a852] hover:text-[#288741] hover:underline font-medium">
+            <Link to="/" className="text-[#15e637] hover:text-[#11b32b] hover:underline font-medium">
               Navigate to main page
             </Link>
           </div>

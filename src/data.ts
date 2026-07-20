@@ -3,6 +3,9 @@ import sportsFirstAidImg from "./assets/images/sports_first_aid_kit_178276966380
 import digitalThermometerImg from "./assets/images/digital_thermometer_product_1781820362040.jpg";
 import laRiveImg from "./assets/images/la_rive_perfume_visible_1782810458478.jpg";
 import skinRepublicImg from "./assets/images/skin_republic_banner_1782733312396.jpg";
+import organicMoringaImg from "./assets/images/organic_moringa_powder_1784319519628.jpg";
+import premiumWheyImg from "./assets/images/premium_whey_protein_pkg_1784319691010.jpg";
+import resistanceBandsImg from "./assets/images/resistance_bands_set_1784319890012.jpg";
 
 export const products = [
   { id: 1, name: "Gentle Baby Wash & Shampoo", category: "Baby Care", price: 12.99, image: babyWashImg },
@@ -10,8 +13,11 @@ export const products = [
   { id: 5, name: "Digital Thermometer", category: "Pharmacy & Supplement", price: 14.99, image: digitalThermometerImg },
   { id: 7, name: "La Rive Perfume", category: "Beauty & Cosmetics", price: 19.99, image: laRiveImg },
   { id: 10, name: "Skin Republic - Glass Skin", category: "Beauty & Cosmetics", price: 24.99, image: skinRepublicImg },
-  { id: 8, name: "Premium Whey Protein (1kg)", category: "Fitness", price: 49.99, image: "https://images.unsplash.com/photo-1579758629938-03607ccdbaba?w=400&q=80" },
-  { id: 9, name: "Resistance Bands Set", category: "Fitness", price: 19.99, image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=400&q=80" },
+  { id: 8, name: "Premium Whey Protein (1kg)", category: "Fitness", price: 49.99, image: premiumWheyImg },
+  { id: 9, name: "Resistance Bands Set", category: "Fitness", price: 19.99, image: resistanceBandsImg },
+  { id: 11, name: "Organic Moringa Powder (250g)", category: "Herbal Products", price: 15.99, image: organicMoringaImg },
+  { id: 12, name: "Pure Chamomile Tea (20 Bags)", category: "Herbal Products", price: 6.99, image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80" },
+  { id: 13, name: "Echinacea Immune Support Drops", category: "Herbal Products", price: 18.50, image: "https://images.unsplash.com/photo-1543362906-acfc16c67564?w=400&q=80" },
 ];
 
 export const medications = [
