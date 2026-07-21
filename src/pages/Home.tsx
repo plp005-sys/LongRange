@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Product } from "../types";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent } from "../components/ui/Card";
-import { ChevronLeft, ChevronRight, Scan, Percent, MapPin, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Scan, Percent, MapPin, ArrowRight, Pill, Package, Droplet, Sparkles, Baby, Wind, Scissors, HeartPulse } from "lucide-react";
 import { useCart } from "../contexts/CartContext";
 import babyImg from "../assets/images/african_baby_banner_1782732961309.jpg";
 import firstAidImg from "../assets/images/first_aid_kit_1784115713506.jpg";
@@ -22,9 +22,19 @@ export default function Home() {
 
   const categories = [
     { name: "Personal Care", image: firstAidImg, title: "SELF HEALTH CARE", subtitle: "FIRST AID KIT" },
-    { name: "Beauty & Cosmetics", image: laRiveImg, title: "LA RIVE", subtitle: "PERFUMES" },
-    { name: "Beauty & Cosmetics", image: skinRepublicImg, title: "GLASS SKIN", subtitle: "UNWRAPPED" },
+    { name: "Beauty Bar", image: laRiveImg, title: "LA RIVE", subtitle: "PERFUMES" },
+    { name: "Beauty Bar", image: skinRepublicImg, title: "GLASS SKIN", subtitle: "UNWRAPPED" },
     { name: "Baby Care", image: babyImg, title: "GENTLE TOUCH", subtitle: "FOR YOUR LITTLE ONE" },
+  ];
+
+  const categoryCards = [
+    { name: "Beauty Bar", subtitle: "Cosmetics & Makeup", icon: Sparkles, iconBg: "bg-pink-100 text-pink-600", bg: "bg-pink-50/70", link: "Beauty Bar" },
+    { name: "Baby Bar", subtitle: "Care for little ones", icon: Baby, iconBg: "bg-blue-100 text-blue-600", bg: "bg-blue-50/70", link: "Baby Care" },
+    { name: "Fragrances", subtitle: "Scents & Perfumes", icon: Wind, iconBg: "bg-purple-100 text-purple-600", bg: "bg-purple-50/70", link: "Beauty & Cosmetics" },
+    { name: "Hair Care", subtitle: "Shampoos & styling", icon: Scissors, iconBg: "bg-yellow-100 text-yellow-600", bg: "bg-yellow-50/70", link: "Personal Care" },
+    { name: "Health Bar", subtitle: "Vitamins & Supplements", icon: HeartPulse, iconBg: "bg-red-100 text-red-600", bg: "bg-red-50/70", link: "Pharmacy & Supplement" },
+    { name: "Personal Care", subtitle: "Hygiene & Body", icon: Droplet, iconBg: "bg-cyan-100 text-cyan-600", bg: "bg-cyan-50/70", link: "Personal Care" },
+    { name: "Skin Care", subtitle: "Lotions & Serums", icon: Sparkles, iconBg: "bg-teal-100 text-teal-600", bg: "bg-teal-50/70", link: "Beauty & Cosmetics" }
   ];
 
   useEffect(() => {
@@ -179,6 +189,26 @@ export default function Home() {
               </Card>
             ))
           )}
+        </div>
+      </section>
+
+      {/* Shop by Category Section */}
+      <section className="container mx-auto px-4 pb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {categoryCards.map((cat, index) => (
+            <Link key={index} to={`/shop?category=${cat.link}`} className="block h-full">
+              <Card className={`h-full border-none shadow-sm hover:shadow-md transition-all duration-300 ${cat.bg} rounded-2xl overflow-hidden`}>
+                <CardContent className="p-6 flex flex-col h-full">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${cat.iconBg}`}>
+                    <cat.icon className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-extrabold text-gray-900 text-lg leading-tight mb-2">
+                    {cat.name}
+                  </h4>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
       </section>
 

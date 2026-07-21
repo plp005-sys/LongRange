@@ -18,10 +18,10 @@ export default function Shop() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
   const [searchQuery, setSearchQuery] = useState("");
   const [isBeautyOpen, setIsBeautyOpen] = useState(
-    initialCategory === "Beauty & Cosmetics" || initialCategory === "Skin Republic" || initialCategory === "La Rive"
+    initialCategory === "Beauty Bar" || initialCategory === "Beauty & Cosmetics" || initialCategory === "Skin Republic" || initialCategory === "La Rive"
   );
 
-  const categories = ["All", "Shop", "Beauty & Cosmetics", "Personal Care", "Baby Care", "Pharmacy & Supplement", "Fitness", "Herbal Products"];
+  const categories = ["All", "Shop", "Beauty Bar", "Personal Care", "Baby Care", "Pharmacy & Supplement", "Fitness", "Herbal Products"];
   const beautySubCategories = ["Skin Republic", "La Rive"];
 
   useEffect(() => {
@@ -53,12 +53,14 @@ export default function Shop() {
   }, [searchParams]);
 
   const filteredProducts = products.filter(p => {
-    let matchesCategory = !selectedCategory || selectedCategory === "All" || p.category === selectedCategory;
+    let matchesCategory = !selectedCategory || selectedCategory === "All" || p.category === selectedCategory || (selectedCategory === "Beauty Bar" && p.category === "Beauty & Cosmetics");
     
     if (selectedCategory === "Skin Republic") {
       matchesCategory = p.name.toLowerCase().includes("skin republic");
     } else if (selectedCategory === "La Rive") {
       matchesCategory = p.name.toLowerCase().includes("la rive");
+    } else if (selectedCategory === "Beauty Bar") {
+       matchesCategory = p.category === "Beauty & Cosmetics" || p.category === "Beauty Bar";
     }
 
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -86,7 +88,7 @@ export default function Shop() {
             <div className="flex flex-col space-y-1">
               {categories.map(cat => (
                 <div key={cat} className="flex flex-col">
-                  {cat === "Beauty & Cosmetics" ? (
+                  {cat === "Beauty Bar" ? (
                     <div className="flex flex-col">
                       <div className="flex items-center">
                         <button

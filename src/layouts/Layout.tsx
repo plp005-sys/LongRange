@@ -111,10 +111,11 @@ export default function Layout() {
             </div>
 
             <div className="flex items-center gap-4">
-               <Link to="/locator" title="Find a Store">
+              <Link to="/locator" title="Find a Store" className="flex flex-col items-center">
                 <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white">
                   <MapPin className="h-6 w-6" />
                 </Button>
+                <span className="hidden sm:block text-[10px] text-white/90 leading-none -mt-1 font-medium">Locate a branch</span>
               </Link>
               
               {user ? (

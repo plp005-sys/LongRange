@@ -176,7 +176,7 @@ export default function AdminDashboard() {
         {activeTab === 'inventory' && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Hidden API Inventory</CardTitle>
+              <CardTitle>Inventory</CardTitle>
               <Button size="sm" variant="outline" onClick={() => {
                 setInventoryLoading(true);
                 fetch("/api/inventory").then(res => res.json()).then(data => { setInventory(data); setInventoryLoading(false); }).catch(err => { console.error(err); setInventoryLoading(false); });

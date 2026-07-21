@@ -10,7 +10,9 @@ async function startServer() {
 
   // --- Third-Party Integration ---
   let THIRD_PARTY_API_URL = process.env.THIRD_PARTY_API_URL || "";
-  if (THIRD_PARTY_API_URL.includes("/swagger")) {
+  if (THIRD_PARTY_API_URL.toLowerCase().includes("/api/auth/login")) {
+    THIRD_PARTY_API_URL = THIRD_PARTY_API_URL.substring(0, THIRD_PARTY_API_URL.toLowerCase().indexOf("/api/auth/login"));
+  } else if (THIRD_PARTY_API_URL.includes("/swagger")) {
     THIRD_PARTY_API_URL = THIRD_PARTY_API_URL.split("/swagger")[0];
   }
   const ERP_EMAIL = process.env.ERP_EMAIL || "ecommerce";
@@ -113,17 +115,7 @@ async function startServer() {
     res.json(stores);
   });
 
-  // Mock Hidden Inventory State
-  let inventory = [
-    { id: "INV-001", name: "Amoxicillin 500mg", category: "Antibiotics", stock: 1250, reorderLevel: 500, lastRestocked: "2024-05-15", status: "In Stock", image: "/src/assets/images/amoxicillin_500mg_package_1784626879266.jpg" },
-    { id: "INV-002", name: "Ibuprofen 400mg", category: "Pain Relief", stock: 85, reorderLevel: 200, lastRestocked: "2024-04-20", status: "Low Stock", image: "/src/assets/images/ibuprofen_400mg_package_1784627552297.jpg" },
-    { id: "INV-003", name: "Lisinopril 10mg", category: "Cardiovascular", stock: 430, reorderLevel: 100, lastRestocked: "2024-05-01", status: "In Stock", image: "/src/assets/images/lisinopril_10mg_package_1784627716586.jpg" },
-    { id: "INV-004", name: "Metformin 500mg", category: "Diabetes", stock: 15, reorderLevel: 150, lastRestocked: "2024-03-10", status: "Critical", image: "/src/assets/images/metformin_500mg_package_1784627981384.jpg" },
-    { id: "INV-005", name: "Digital Thermometer", category: "Equipment", stock: 32, reorderLevel: 20, lastRestocked: "2024-05-10", status: "In Stock", image: "/src/assets/images/digital_thermometer_package_1784628227191.jpg" },
-    { id: "INV-006", name: "N95 Face Masks (Box of 50)", category: "PPE", stock: 500, reorderLevel: 100, lastRestocked: "2024-06-01", status: "In Stock", image: "/src/assets/images/n95_face_masks_box_1784628453639.jpg" }
-  ];
-
-  // Mock Hidden Inventory API (Read)
+  // Mock ERP Inventory API (Read)
   app.get("/api/inventory", async (req, res) => {
     // In a real application, you would verify admin authentication here
     
@@ -139,9 +131,17 @@ async function startServer() {
         
         if (response.ok) {
           const data = await response.json();
-          // Assuming the data is an array of products
-          // We can map it to our inventory structure if needed
-          return res.json(data);
+          // Map the ecommerce product data to the inventory structure
+          const inventory = data.map((item: any) => ({
+            id: item.productId,
+            name: item.productName,
+            category: item.categories && item.categories.length > 0 ? item.categories[0].name : "General",
+            stock: "N/A", // Not provided by the API
+            reorderLevel: 10,
+            status: "In Stock", // Assumed
+            lastRestocked: new Date().toISOString().split('T')[0]
+          }));
+          return res.json(inventory);
         } else if (response.status === 401) {
            // Token might be expired, clear it
            erpToken = null;
@@ -151,8 +151,8 @@ async function startServer() {
       }
     }
     
-    // Fallback to mock data
-    res.json(inventory);
+    // Fallback if not configured
+    res.json([]);
   });
 
   // Customer Registration Proxy
@@ -187,44 +187,17 @@ async function startServer() {
 
   // Create new inventory item
   app.post("/api/inventory", (req, res) => {
-    const newItem = {
-      id: `INV-00${inventory.length + 1}`,
-      name: req.body.name || "New Item",
-      category: req.body.category || "General",
-      stock: req.body.stock || 0,
-      reorderLevel: req.body.reorderLevel || 10,
-      lastRestocked: new Date().toISOString().split('T')[0],
-      status: req.body.stock > req.body.reorderLevel ? "In Stock" : "Low Stock"
-    };
-    inventory.push(newItem);
-    res.status(201).json(newItem);
+    res.status(501).json({ error: "Not implemented. Inventory is read-only via ERP." });
   });
 
   // Update existing inventory item
   app.put("/api/inventory/:id", (req, res) => {
-    const id = req.params.id;
-    const index = inventory.findIndex(item => item.id === id);
-    if (index !== -1) {
-      inventory[index] = { ...inventory[index], ...req.body };
-      // Recalculate status based on stock and reorderLevel
-      if (inventory[index].stock <= 0) {
-        inventory[index].status = "Critical";
-      } else if (inventory[index].stock <= inventory[index].reorderLevel) {
-        inventory[index].status = "Low Stock";
-      } else {
-        inventory[index].status = "In Stock";
-      }
-      res.json(inventory[index]);
-    } else {
-      res.status(404).json({ error: "Item not found" });
-    }
+    res.status(501).json({ error: "Not implemented. Inventory is read-only via ERP." });
   });
 
   // Delete inventory item
   app.delete("/api/inventory/:id", (req, res) => {
-    const id = req.params.id;
-    inventory = inventory.filter(item => item.id !== id);
-    res.json({ success: true, message: "Item deleted" });
+    res.status(501).json({ error: "Not implemented. Inventory is read-only via ERP." });
   });
 
   // --- Vite Middleware (MUST BE AFTER API ROUTES) ---
