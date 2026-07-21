@@ -115,12 +115,12 @@ async function startServer() {
 
   // Mock Hidden Inventory State
   let inventory = [
-    { id: "INV-001", name: "Amoxicillin 500mg", category: "Antibiotics", stock: 1250, reorderLevel: 500, lastRestocked: "2024-05-15", status: "In Stock" },
-    { id: "INV-002", name: "Ibuprofen 400mg", category: "Pain Relief", stock: 85, reorderLevel: 200, lastRestocked: "2024-04-20", status: "Low Stock" },
-    { id: "INV-003", name: "Lisinopril 10mg", category: "Cardiovascular", stock: 430, reorderLevel: 100, lastRestocked: "2024-05-01", status: "In Stock" },
-    { id: "INV-004", name: "Metformin 500mg", category: "Diabetes", stock: 15, reorderLevel: 150, lastRestocked: "2024-03-10", status: "Critical" },
-    { id: "INV-005", name: "Digital Thermometer", category: "Equipment", stock: 32, reorderLevel: 20, lastRestocked: "2024-05-10", status: "In Stock" },
-    { id: "INV-006", name: "N95 Face Masks (Box of 50)", category: "PPE", stock: 500, reorderLevel: 100, lastRestocked: "2024-06-01", status: "In Stock" }
+    { id: "INV-001", name: "Amoxicillin 500mg", category: "Antibiotics", stock: 1250, reorderLevel: 500, lastRestocked: "2024-05-15", status: "In Stock", image: "/src/assets/images/amoxicillin_500mg_package_1784626879266.jpg" },
+    { id: "INV-002", name: "Ibuprofen 400mg", category: "Pain Relief", stock: 85, reorderLevel: 200, lastRestocked: "2024-04-20", status: "Low Stock", image: "/src/assets/images/ibuprofen_400mg_package_1784627552297.jpg" },
+    { id: "INV-003", name: "Lisinopril 10mg", category: "Cardiovascular", stock: 430, reorderLevel: 100, lastRestocked: "2024-05-01", status: "In Stock", image: "/src/assets/images/lisinopril_10mg_package_1784627716586.jpg" },
+    { id: "INV-004", name: "Metformin 500mg", category: "Diabetes", stock: 15, reorderLevel: 150, lastRestocked: "2024-03-10", status: "Critical", image: "/src/assets/images/metformin_500mg_package_1784627981384.jpg" },
+    { id: "INV-005", name: "Digital Thermometer", category: "Equipment", stock: 32, reorderLevel: 20, lastRestocked: "2024-05-10", status: "In Stock", image: "/src/assets/images/digital_thermometer_package_1784628227191.jpg" },
+    { id: "INV-006", name: "N95 Face Masks (Box of 50)", category: "PPE", stock: 500, reorderLevel: 100, lastRestocked: "2024-06-01", status: "In Stock", image: "/src/assets/images/n95_face_masks_box_1784628453639.jpg" }
   ];
 
   // Mock Hidden Inventory API (Read)
