@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs/promises";
 import { createServer as createViteServer } from "vite";
 
 async function startServer() {
@@ -151,8 +152,14 @@ async function startServer() {
       }
     }
     
-    // Fallback if not configured
-    res.json([]);
+    // Fallback if not configured or external API fails
+    try {
+      const invData = await fs.readFile(path.join(process.cwd(), 'inv.json'), 'utf-8');
+      return res.json(JSON.parse(invData));
+    } catch (err) {
+      console.error("Failed to read inv.json fallback", err);
+      return res.json([]);
+    }
   });
 
   // Customer Registration Proxy
