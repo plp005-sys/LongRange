@@ -1,11 +1,11 @@
+import { invData } from "./invData.ts";
 import express from "express";
 import path from "path";
 import fs from "fs/promises";
 import { createServer as createViteServer } from "vite";
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   app.use(express.json());
 
@@ -154,8 +154,7 @@ async function startServer() {
     
     // Fallback if not configured or external API fails
     try {
-      const invData = await fs.readFile(path.join(process.cwd(), 'inv.json'), 'utf-8');
-      return res.json(JSON.parse(invData));
+      return res.json(invData);
     } catch (err) {
       console.error("Failed to read inv.json fallback", err);
       return res.json([]);
@@ -207,27 +206,29 @@ async function startServer() {
     res.status(501).json({ error: "Not implemented. Inventory is read-only via ERP." });
   });
 
-  // --- Vite Middleware (MUST BE AFTER API ROUTES) ---
-  if (process.env.NODE_ENV !== "production") {
+  // --- Vite Middleware ---
+if (!process.env.VERCEL && process.env.NODE_ENV !== "production") {
+  (async () => {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
     });
-  }
-
+  })();
+} else {
+  const distPath = path.join(process.cwd(), "dist");
+  app.use(express.static(distPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
   if (!process.env.VERCEL) {
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
   }
-  return app;
 }
 
-export default startServer();
+export default app;
